@@ -13,8 +13,8 @@ func abapSystem() saprfc.ConnectionParameter {
 	return saprfc.ConnectionParameter{
 		Dest:   "aa",
 		Client: "800",
-		User:   "wusj",
-		Passwd: "wusjcxy",
+		User:   "xxxx",
+		Passwd: "xxxx",
 		Lang:   "ZH",
 		Ashost: "192.168.100.131",
 		Sysnr:  "00",
