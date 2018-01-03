@@ -16,7 +16,7 @@ func abapSystem() saprfc.ConnectionParameter {
 		User:   "xxxx",
 		Passwd: "xxxx",
 		Lang:   "ZH",
-		Ashost: "192.168.100.131",
+		Ashost: "192.168.0.0",
 		Sysnr:  "00",
 		//		Saprouter: "/H/123.125.21.51/H/",
 	}
