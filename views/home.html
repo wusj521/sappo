@@ -1,0 +1,108 @@
+{{template "header"}}
+	
+	<body>
+ 
+	<nav class="navbar navbar-default navbar-fixed-top">
+  		<div class="container">
+  		{{template "navbar" .}}
+		</div>
+	</nav>
+
+<head>
+
+<div class="row">
+    <div class="col-sm-6 col-md-3">
+      <div class="thumbnail">
+        <div class="caption">
+          <h3>订单待审批:<span class="label label-success">{{.Flagnot}}</span></h3>
+            <p>待审批的采购订单行项目数</p>
+            <p>
+              <a href="/daisp" class="btn btn-primary" role="button">
+                        点击查看
+                </a> 
+            </p>
+        </div>
+    </div>
+  </div>
+   <div class="col-sm-6 col-md-3">
+        <div class="thumbnail">
+          <div class="caption">
+            <h3>待审批总金额:<span class="label label-success">{{.Ebelncont}} CNY</span></h3>
+              <p>待审批采购订单的总金额</p>
+              <p>
+                <a href="/daisp" class="btn btn-primary" role="button">
+                        点击查看
+                </a> 
+              </p>
+          </div>
+        </div>
+  </div>
+  </div>
+<!--
+<canvas id="pie-chart" width="800" height="450"></canvas>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+<script type="text/javascript">
+new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: ["待审批{{.Flagnot}}", "已审批{{.Flagx}}"],
+      datasets: [{
+        label: "Population (millions)",
+        backgroundColor: ["#8e5ea2", "#3e95cd","#3cba9f","#e8c3b9","#c45850"],
+       // data: [2478,5267,734,784,433]
+        data: [ {{.Flagnot}},{{.Flagx}}
+       // {{range $key, $val := .Rellist}}
+       // {{$val}},
+       // {{end}}
+        ]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'SAP采购订单审批情况'
+      }
+    }
+});
+</script>
+  <h5>待审批订单 <span class="label label-info">{{.Flagnot}}</span></h5>
+  <h5>已审批订单 <span class="label label-success">{{.Flagx}}</span></h5>
+-->
+
+<head>
+<canvas id="bar-chart-grouped" width="800" height="450"></canvas>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+
+<script type="text/javascript">
+	new Chart(document.getElementById("bar-chart-grouped"), {
+    type: 'horizontalBar',
+    data: {
+      labels: ["1900", "1950", "1999", "2050"],
+      datasets: [
+        {
+          label: "Africa",
+          backgroundColor: "#3e95cd",
+          data: [133,221,783,2478]
+        }//, {
+         // label: "Europe",
+         // backgroundColor: "#8e5ea2",
+         // data: [408,547,675,734]
+        //}
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '各工厂采购订单数量和金额'
+      }
+    }
+});
+</script>
+  
+
+	<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>

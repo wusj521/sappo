@@ -1,0 +1,52 @@
+{{template "header"}}
+	
+	<body>
+ 
+	<nav class="navbar navbar-default navbar-fixed-top">
+  		<div class="container">
+  		{{template "navbar" .}}
+		</div>
+	</nav>
+
+<head>
+<canvas id="line-chart" width="800" height="450"></canvas>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+<script type="text/javascript">
+
+
+new Chart(document.getElementById("line-chart"), {
+  type: 'line',
+  data: {
+    labels: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月"],
+    datasets: [{ 
+      data: [
+        {{range $key, $val := .Price}}
+        {{$val}},
+        {{end}}
+        ],
+        label: "Africa",
+        borderColor: "#3e95cd",
+        fill: false
+      }//, { //实现多条数据
+       // data: [282,350,411,502,635,809,947,1402,3700,5267],
+       // label: "Asia",
+       // borderColor: "#8e5ea2",
+       // fill: false
+      //}
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'World population per region (in millions)'
+    }
+  }
+});
+</script>
+
+
+	<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>

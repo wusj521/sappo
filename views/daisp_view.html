@@ -1,0 +1,62 @@
+{{template "header"}}
+	<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        {{template "navbar" .}}
+        </div>
+    </div>
+
+
+	<div class="container">
+		<form method="post" action="/daisp">
+			<input type="hidden" name="tid" value="{{.Tid}}">
+			<input type="hidden" name="ebeln" value="{{.sappo.Ebeln}}">
+			<input type="hidden" name="matnr" value="{{.sappo.Matnr}}">
+			
+			{{if .Flag}}
+			<button type="submit" class="btn btn-default btn-lg btn-primary btn-block">审批</button>
+			{{else}}
+			<button href="/daisp?exit=true" type="submit" class="btn btn-default btn-lg btn-primary btn-block" onclick="return backToHome();">返回</button>
+			{{end}}
+
+			<script type="text/javascript">
+				      	function backToHome() {
+				      		window.location.href = "/daisp";
+				      		return false;
+				      	}
+			</script>	      	
+			
+			<ul class="list-group">	
+				<li class="list-group-item">			
+					<div style= "display:inline;">供应商：</div>
+					<div class="text-right" style= "display:inline">{{.sappo.Name1}}</div>
+				</li>
+				<li class="list-group-item">送货地点:&nbsp;&nbsp;&nbsp;&nbsp; {{.sappo.Name}}</li>
+  				<li class="list-group-item">产品名：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Maktx}}</li>
+				<li class="list-group-item">本次量：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Menge1}}</li>
+				<li class="list-group-item">本次单价：&nbsp;&nbsp;&nbsp;&nbsp;<!--{{.sappo.Netpr1}}<a href="/price" class="pull-right">价格趋势表</a></li>-->
+				{{.sappo.Netpr1}}</li>
+				<li class="list-group-item">库存量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys071}}</li>
+				<li class="list-group-item">日耗量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys091}}<a href="/price" class="pull-right">日耗趋势表</a></li>
+				<li class="list-group-item">在途量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgztl1}}</li>
+				<li class="list-group-item">掌握量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys06701}}</li>
+				<li class="list-group-item">掌握天数: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys06901}}</li>
+				<li class="list-group-item">价格类型：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys05k}}</li>
+				<li class="list-group-item">付款方式:&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Ebeln}}</li>		
+				<li class="list-group-item">到站: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys0502}}</li>
+				<li class="list-group-item">单据日期:&nbsp;&nbsp;&nbsp;&nbsp; {{.sappo.Bedat}}</li>
+				<li class="list-group-item">到货日期: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Eindt}}</li>
+				<li class="list-group-item">上次单价: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys081}}</li>
+				<li class="list-group-item">上次时间: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys0901}}</li>
+				<li class="list-group-item">是否招标: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys03}}</li>
+				<li class="list-group-item">采购订单: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Ebeln}}</li>
+				<li class="list-group-item">经办人: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Namelast}}</li>  
+				<li class="list-group-item">已批准人:&nbsp;&nbsp;&nbsp;&nbsp; {{.sappo.Username}}</li> 
+				<li class="list-group-item">审批日期及时间:&nbsp;&nbsp;&nbsp;&nbsp; {{.sappo.Udate}}</li>
+			</ul>
+		</form>
+	</div>
+		<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>

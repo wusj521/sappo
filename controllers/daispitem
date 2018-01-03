@@ -1,0 +1,65 @@
+package controllers
+
+import (
+	"sappo/models"
+
+	"github.com/astaxie/beego"
+)
+
+type ItemController struct {
+	beego.Controller
+}
+
+func (c *ItemController) Get() {
+	c.Data["IsLogin"] = checkAccount(c.Ctx)
+	c.Data["IsDaisp"] = true
+	c.TplName = "daisp_view.html"
+
+	sappo, err := models.GetDaisp(c.Ctx.Input.Param("0")) //	tc.Ctx.Input.Param("0")
+	if err != nil {
+		beego.Error(err)
+		c.Redirect("/daisp", 302)
+		return
+	}
+	c.Data["Sappo"] = sappo
+}
+
+func (c *ItemController) Post() {
+	//登录检查
+	if !checkAccount(c.Ctx) {
+		c.Redirect("/login", 302)
+		return
+	}
+
+	// 解析表单
+	tid := c.Input().Get("tid")
+	title := c.Input().Get("title")
+
+	var err error
+	if len(tid) == 0 {
+		//		err = models.AddTopic(title, content)
+		//	} else {
+		err = models.ModifyDaisp(tid, title)
+	}
+
+	if err != nil {
+		beego.Error(err)
+	}
+
+	c.Redirect("/daisp/item", 302)
+}
+
+//查看和修改
+/*func (c *DaispController) Modify() {
+	//	c.TplNames = "daisp_view.html"
+
+	tid := c.Input().Get("tid")
+	topic, err := models.GetTopic(tid)
+	if err != nil {
+		beego.Error(err)
+		c.Redirect("/", 302)
+		return
+	}
+	c.Data["Topic"] = topic
+	c.Data["Tid"] = tid
+}*/

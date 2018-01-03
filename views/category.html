@@ -1,0 +1,60 @@
+{{template "header"}}
+
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        {{template "navbar" .}}
+        </div>
+      </div>
+
+
+    <div class="container">
+      <h4>分类一览表</h4>
+      <form class="form-inline" method="GET" action="/category">
+        <div class="form-group">
+          <input id="name" type="text" class="form-control" name="name" placeholder="Enter category name" >
+          <input type="hidden" name="op" value="add">
+        </div>        
+        <button class="btn btn-default navbar-btn action" onclick="return checkInput()" type="submit">添加分类</button>
+        
+      </form>
+      <script type="text/javascript">
+      function checkInput() {
+        var name = document.getElementById("name");
+        if (name.value.length == 0) {
+          alert("请输入分类名称");
+          return false;
+           }
+        }
+      </script>
+
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>分类名称</th>
+            <th>文章数</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range.Categories}}
+          <tr>
+            <th>{{.Id}}</th>
+            <th>{{.Title}}</th>
+            <th>{{.TopicCount}}</th>
+            <th>
+              <a href="/category?op=del&id={{.Id}}">删除</a>
+            </th>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

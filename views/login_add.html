@@ -1,0 +1,45 @@
+{{template "header"}}
+<body>
+
+    <div class="container">
+
+      <form class="form-signin" method="post" action="/loginadd">
+        <h4 class="form-signin-heading">请输入新用户信息：</h4>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="text" id="uname" class="form-control" name="uname" placeholder="Account" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="pwd" class="form-control" name="pwd" placeholder="Password" required>
+        <label for="prg" class="sr-only">Prg</label>
+        <input type="text" id="prg" class="form-control" name="prg" placeholder="输入审批码" required>
+        <label for="tel" class="sr-only">Tel</label>
+        <input type="text" id="tel" class="form-control" name="tel" placeholder="Tel" required>
+        <button class="btn btn-lg btn-primary btn-block" onclick="return checkInput()" type="submit">保存</button>
+        
+      </form>
+      <script type="text/javascript">
+      function checkInput() {
+        var uname = document.getElementById("uname");
+        if (uname.value.length == 0) {
+          alert("请输入帐号");
+          return false;
+        }
+        var pwd = document.getElementById("pwd");
+        if (pwd.value.length == 0) {
+          alert("请输入密码");
+          return false;
+        }
+        var prg = document.getElementById("prg")
+        if (prg.value.length == 0) {
+          alert("输入SAP审批码");
+          return false;
+        }
+      }
+      </script>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

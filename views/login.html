@@ -1,0 +1,43 @@
+{{template "header"}}
+<body>
+
+    <div class="container">
+
+      <form class="form-signin" method="post" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="text" id="uname" class="form-control" name="uname" placeholder="Email address" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="pwd" class="form-control" name="pwd" placeholder="Password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="autoLogin" value="remember-me"> Remember me
+            <a class="btn btn-xs btn-default" href="/loginadd" role="button">新用户</a>
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" onclick="return checkInput()" type="submit">Sign in</button>
+        
+      </form>
+      <script type="text/javascript">
+      function checkInput() {
+        var uname = document.getElementById("uname");
+        if (uname.value.length == 0) {
+          alert("请输入帐号");
+          return false;
+        }
+        var pwd = document.getElementById("pwd");
+        if (pwd.value.length == 0) {
+          alert("请输入密码");
+          return false;
+        }
+        
+      }
+      </script>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

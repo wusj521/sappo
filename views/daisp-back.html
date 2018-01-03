@@ -1,0 +1,44 @@
+{{template "header"}}
+	
+	<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        {{template "navbar" .}}
+        </div>
+    </div>
+
+  <div class="list-group">
+  <form class="form-inline" method="GET" action="/daisp">
+   
+
+    {{range.Sappo}}
+      <!--{{if .Flag}}
+       <a href="/daisp/view?tid={{ .Id}}" class="list-group-item active">
+      {{else}}
+       <a href="/daisp/view?tid={{ .Id}}" class="list-group-item">
+      {{end}} 实现审批后颜色标记-->
+        <a href="/daisp/view?tid={{ .Id}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{.Name1}}{{.Prgco}}
+          {{if .Flag}}
+          <span class="label pull-right label-success">已审</span></h4>
+          {{else}}
+          <span class="label pull-right label-primary">未审</span></h4>
+          {{end}}
+          <h4 class="list-group-item-heading">订单:{{.Ebeln}}&nbsp;&nbsp;行项目:{{.Ebelp}}</h4>
+          <p class="list-group-item-text">{{.Maktx}}&nbsp;&nbsp;采购量:{{.Menge1}}&nbsp;&nbsp;单价:{{.Netpr1}}
+            <br />日期:{{.Bedat}}&nbsp;&nbsp;经办人:{{.Namelast}}
+            <br />工厂:{{.Name}}&nbsp;&nbsp;已批准人：{{.Username}}</p>
+        </a>
+    {{end}}
+
+
+    <!--<a href="#" class="list-group-item">Vestibulum at eros</a>-->
+     
+    </form>
+  </div>
+
+
+	<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>

@@ -1,0 +1,31 @@
+package controllers
+
+import (
+	"sappo/models"
+
+	"github.com/astaxie/beego"
+)
+
+type SappoController struct {
+	beego.Controller
+}
+
+func (c *SappoController) Get() {
+	//登录检查
+	if !checkAccount(c.Ctx) {
+		c.Redirect("/login", 302)
+		return
+	}
+	c.Data["IsSappo"] = true
+	c.Data["IsLogin"] = checkAccount(c.Ctx)
+	c.TplName = "sappo.html"
+	//连接SAP
+	var err error
+	err = models.GetSappo()
+	if err != nil {
+		beego.Error(err)
+	}
+
+	c.Redirect("/", 302)
+	return
+}
