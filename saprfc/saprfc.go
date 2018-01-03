@@ -12,6 +12,8 @@ var SAPconnection *saprfc.Connection
 func abapSystem() saprfc.ConnectionParameter {
 	return saprfc.ConnectionParameter{
 		Dest:   "aa",
+		Client: "xx",
+		User:   "xxx",
 		Passwd: "xxx",
 		Lang:   "ZH",
 		Ashost: "192.168.0.1",
