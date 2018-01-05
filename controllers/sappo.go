@@ -30,6 +30,7 @@ func (c *SappoController) Get() {
 
 	err = models.GetSappo(prg)
 	if err != nil {
+		c.Abort("401")
 		beego.Error(err)
 	}
 

@@ -2,13 +2,17 @@
 <body>
 
     <div class="container">
-
-      <form class="form-signin" method="post" action="/loginadd">
-        <h4 class="form-signin-heading">请输入新用户信息：</h4>
+      <h1>修改用户密码</h1>
+      <form class="form-signin" method="post" action="/loginchange">
+        <h4 class="form-signin-heading">请输入更改用户信息：</h4>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="text" id="uname" class="form-control" name="uname" placeholder="新用户ID" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="pwd" class="form-control" name="pwd" placeholder="新密码" required>
+        <input type="text" id="uname" class="form-control" name="uname" placeholder="输入用户ID" required autofocus>
+        <label for="inputPassword" class="sr-only">OldPassword</label>
+        <input type="password" id="pwd" class="form-control" name="pwd" placeholder="旧密码" required>
+
+        <label for="inputPassword" class="sr-only">NewPassword</label>
+        <input type="password" id="newpwd" class="form-control" name="newpwd" placeholder="新密码" required>
+
         <label for="prg" class="sr-only">Prg</label>
         <input type="text" id="prg" class="form-control" name="prg" placeholder="输入审批码" required>
         <label for="tel" class="sr-only">Tel</label>
@@ -25,9 +29,15 @@
         }
         var pwd = document.getElementById("pwd");
         if (pwd.value.length == 0) {
-          alert("请输入密码");
+          alert("请输入旧密码");
           return false;
         }
+        var newpwd = document.getElementById("newpwd");
+        if (newpwd.value.length == 0) {
+          alert("请输入新密码");
+          return false;
+        }
+
         var prg = document.getElementById("prg")
         if (prg.value.length == 0) {
           alert("输入SAP审批码");

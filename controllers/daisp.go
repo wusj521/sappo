@@ -72,7 +72,7 @@ func (c *DaispController) Post() {
 	c.Redirect("/daisp", 302)
 }
 
-//列出将要审批的PO
+//列出将要审批的PO行项目内容
 func (c *DaispController) View() {
 	c.Data["IsLogin"] = checkAccount(c.Ctx)
 	c.Data["IsDaisp"] = true
@@ -93,6 +93,13 @@ func (c *DaispController) View() {
 	//SAP Po,在查看html时，代码中加入以下隐藏字段，方便此页面执行POST或其它动作。
 	////func (c *DaispController) Post()中使用
 	//c.Data["Ebeln"] = sappo.Ebeln
+
+	////在daisp的view明细页获取表单中的物料号matnr并存入cookie;
+	////在price图表中使用
+	maxAge := 0
+	////matnr := c.Input().Get("matnr")
+	//matnr := sappo.Matnr
+	c.Ctx.SetCookie("matnr", sappo.Matnr, maxAge, "/")
 
 }
 

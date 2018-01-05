@@ -11,10 +11,9 @@
 		<form method="post" action="/daisp">
 			<input type="hidden" name="tid" value="{{.Tid}}">
 			<input type="hidden" name="ebeln" value="{{.sappo.Ebeln}}">
-			<input type="hidden" name="matnr" value="{{.sappo.Matnr}}">
 			
 			{{if .Flag}}
-			<button type="submit" class="btn btn-default btn-lg btn-primary btn-block">审批</button>
+			<button type="submit" class="btn btn-default btn-lg btn-primary btn-block">审批 {{.sappo.Menge1}}</button>
 			{{else}}
 			<button href="/daisp?exit=true" type="submit" class="btn btn-default btn-lg btn-primary btn-block" onclick="return backToHome();">返回</button>
 			{{end}}
@@ -35,9 +34,9 @@
   				<li class="list-group-item">产品名：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Maktx}}</li>
 				<li class="list-group-item">本次量：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Menge1}}</li>
 				<li class="list-group-item">本次单价：&nbsp;&nbsp;&nbsp;&nbsp;<!--{{.sappo.Netpr1}}<a href="/price" class="pull-right">价格趋势表</a></li>-->
-				{{.sappo.Netpr1}}</li>
+				{{.sappo.Netpr1}}<a href="/price" class="pull-right">各厂采购价格</a></li>
 				<li class="list-group-item">库存量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys071}}</li>
-				<li class="list-group-item">日耗量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys091}}<a href="/price" class="pull-right">日耗趋势表</a></li>
+				<li class="list-group-item">日耗量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys091}}</li>
 				<li class="list-group-item">在途量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgztl1}}</li>
 				<li class="list-group-item">掌握量: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys06701}}</li>
 				<li class="list-group-item">掌握天数: &nbsp;&nbsp;&nbsp;&nbsp;{{.sappo.Zgys06901}}</li>

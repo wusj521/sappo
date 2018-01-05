@@ -70,21 +70,26 @@ new Chart(document.getElementById("pie-chart"), {
   <h5>已审批订单 <span class="label label-success">{{.Flagx}}</span></h5>
 -->
 
-<head>
-<canvas id="bar-chart-grouped" width="800" height="450"></canvas>
+
+<canvas id="myChart" width="400" height="400"></canvas>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 
 <script type="text/javascript">
-	new Chart(document.getElementById("bar-chart-grouped"), {
+	new Chart(document.getElementById("myChart").getContext("2d"), {
     type: 'horizontalBar',
     data: {
-      labels: ["1900", "1950", "1999", "2050"],
+      //labels: ["1900", "1950", "1999", "2050"],
+      labels: [{{range $key, $val := .Maktxs}}{{$val}},{{end}}],
       datasets: [
         {
-          label: "Africa",
+          label: "库存可用天数",
           backgroundColor: "#3e95cd",
-          data: [133,221,783,2478]
+
+          //data: [133,221,783,2478]
+          data: [{{range $key, $val := .Zgys06901s}}
+            {{$val}},
+            {{end}}]
         }//, {
          // label: "Europe",
          // backgroundColor: "#8e5ea2",
@@ -95,7 +100,7 @@ new Chart(document.getElementById("pie-chart"), {
     options: {
       title: {
         display: true,
-        text: '各工厂采购订单数量和金额'
+        text: '查看物料库存可用天数'
       }
     }
 });

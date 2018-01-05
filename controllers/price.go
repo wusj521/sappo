@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"sappo/models"
 
 	"github.com/astaxie/beego"
@@ -22,16 +23,15 @@ func (c *PriceController) Get() {
 
 	c.Data["IsLogin"] = checkAccount(c.Ctx)
 	//price := [10]int{86, 1114, 106, 106, 1107, 111, 1133, 221, 783, 2478}
-	var werks string = "DL01"
-	var sptag string = "20171108"
-	var mcomp string = "000000000010000119"
-	price, err := models.GetPricelist(sptag, werks, mcomp)
+	matnr := c.Ctx.GetCookie("matnr")
+	datetime, price, err := models.GetPricelistOut(matnr)
+	fmt.Println(datetime, price)
 	if err != nil {
 		beego.Error(err)
 		c.Redirect("/daisp", 302)
 		return
 	}
-
+	c.Data["datetime"] = datetime
 	c.Data["Price"] = price
 	//c.Data["json"] = &price //json传递
 	//c.ServeJSON()//json传递

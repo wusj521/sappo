@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"sappo/models"
 
 	"github.com/astaxie/beego"
@@ -29,22 +28,22 @@ func (c *HomeController) Get() {
 	// 解析表单-从表单字段中获取内容
 	prg := c.Ctx.GetCookie("prg")
 	flagx, flagnot, ebelncont := models.GetPrgcocount(prg)
-	fmt.Println(flagx, flagnot)
 	//rel_list1 := [10]int{50, 30, 20}
 	c.Data["Flagx"] = flagx
 	c.Data["Flagnot"] = flagnot
 	c.Data["Ebelncont"] = ebelncont
 
 	//读取物料可用天数
-	flag := "X" //已审批标记
-	Matnrkday, err := models.GetMatnrkday(flag, prg)
+	flag := "" //未审批标记
+	Maktxs, Zgys06901s, err := models.GetMatnrkday(flag, prg)
 	if err != nil {
 		beego.Error(err)
 		c.Redirect("/daisp", 302)
 		return
 	}
 
-	c.Data["Matnrkday"] = Matnrkday
+	c.Data["Maktxs"] = Maktxs         //工厂加物料描述
+	c.Data["Zgys06901s"] = Zgys06901s //库存可用天数
 
 	/*	c.Data["Website"] = "beego.me"
 		c.Data["Email"] = "astaxie@gmail.com"

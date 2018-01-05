@@ -9,33 +9,25 @@
 	</nav>
 
 <head>
-    <button href="/price?exit=true" type="submit" class="btn btn-default btn-group-lg" onclick="return backToHome();">返回待审批页</button>
-    <script type="text/javascript">
-              function backToHome() {
-                window.location.href = "/daisp";
-                return false;
-              }
-    </script>	      	
-
-<canvas id="bar-chart-horizontal" width="800" height="450"></canvas>
+<canvas id="line-chart" width="800" height="450"></canvas>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 <script type="text/javascript">
 
 
-new Chart(document.getElementById("bar-chart-horizontal"), {
-  type: 'horizontalBar',
+new Chart(document.getElementById("line-chart"), {
+  type: 'line',
   data: {
     labels: [{{range $key, $val := .datetime}}{{$val}},{{end}}],
-    datasets: [{
-      label: "各厂价格",
-      backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+    datasets: [{ 
       data: [
         {{range $key, $val := .Price}}
          {{$val}},
         {{end}}
-        ]
-       //fill: false
+        ],
+        label: "Africa",
+        borderColor: "#3e95cd",
+        fill: false
       }//, { //实现多条数据
        // data: [282,350,411,502,635,809,947,1402,3700,5267],
        // label: "Asia",
@@ -45,10 +37,9 @@ new Chart(document.getElementById("bar-chart-horizontal"), {
     ]
   },
   options: {
-    legend: { display: false },
     title: {
       display: true,
-      text: '各工厂近期执行采购价格图例'
+      text: 'World population per region (in millions)'
     }
   }
 });
