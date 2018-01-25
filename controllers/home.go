@@ -24,14 +24,20 @@ func (c *HomeController) Get() {
 
 	//c.Data["Prgco_X"], c.Data["Prgco_not"],
 	//rel_list := [2]int
-
+//读取采购订单行数量
 	// 解析表单-从表单字段中获取内容
-	prg := c.Ctx.GetCookie("prg")
+	prg := c.Ctx.GetCookie("__prg")//PO审批码
 	flagx, flagnot, ebelncont := models.GetPrgcocount(prg)
 	//rel_list1 := [10]int{50, 30, 20}
 	c.Data["Flagx"] = flagx
 	c.Data["Flagnot"] = flagnot
 	c.Data["Ebelncont"] = ebelncont
+//读取采购申请行数量
+	prgpr := c.Ctx.GetCookie("__prgpr")//PR审批码
+	flagxpr, flagnotpr := models.GetPrgcocountpr(prgpr)
+	c.Data["Flagxpr"] = flagxpr
+	c.Data["Flagnotpr"] = flagnotpr
+
 
 	//读取物料可用天数
 	flag := "" //未审批标记

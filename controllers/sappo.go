@@ -25,10 +25,11 @@ func (c *SappoController) Get() {
 	//连接SAP
 
 	// 解析表单-从表单字段中获取内容
-	prg := c.Ctx.GetCookie("prg")
+	prg := c.Ctx.GetCookie("__prg")
+	prgpr := c.Ctx.GetCookie("__prgpr")
 	var err error
 
-	err = models.GetSappo(prg)
+	err = models.GetSappo(prg,prgpr)
 	if err != nil {
 		c.Abort("401")
 		beego.Error(err)

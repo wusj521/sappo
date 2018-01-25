@@ -23,7 +23,7 @@ func (c *PriceController) Get() {
 
 	c.Data["IsLogin"] = checkAccount(c.Ctx)
 	//price := [10]int{86, 1114, 106, 106, 1107, 111, 1133, 221, 783, 2478}
-	matnr := c.Ctx.GetCookie("matnr")
+	matnr := c.Ctx.GetCookie("__matnr")
 	datetime, price, err := models.GetPricelistOut(matnr)
 	fmt.Println(datetime, price)
 	if err != nil {

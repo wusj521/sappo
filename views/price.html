@@ -24,7 +24,7 @@
 
 
 new Chart(document.getElementById("bar-chart-horizontal"), {
-  type: 'horizontalBar',
+  type: 'Bar',//horizontalBar
   data: {
     labels: [{{range $key, $val := .datetime}}{{$val}},{{end}}],
     datasets: [{

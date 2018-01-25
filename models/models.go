@@ -12,6 +12,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/mattn/go-sqlite3"
+	//_ "github.com/lib/pq"
 	//saprfc "github.com/sap/gorfc/gorfc"
 )
 
@@ -20,39 +21,50 @@ const (
 	_SQLITE3_DRIVER = "sqlite3"
 )
 
+/*
 //字体首写字母大写
+*/
 type Sappo struct {
 	Id        int64
 	Username  string  //已批准人
 	Bedat     string  `orm:"index"` //采购日期
 	Matnr     string  `orm:"index"` //物料号
 	Maktx     string  `orm:"index"` //物料名称
+	Lifnr     string  //供应商代码
 	Name1     string  `orm:"index"` //供应商描述
 	Menge1    float64 //本次量
+	Meins     string  //订单单位
+	Netpr     string  //采购凭证中的净价格(以凭证货币计)
+	Priceunit string  //价格单位 /1kg or /1000kg
 	Netpr1    float64 //本次单价
 	Zgys05k   string  //价格类型
+	Werks     string  //工厂代码
 	Zgys0502  string  //到站
 	Name      string  //送货地点
 	Eindt     string  //到货日期
 	Vtext     string  //付款方式
 	Zgys081   string  //上次单价
 	Zgys0901  string  //上次时间
+	Zgys06    string  //安全库存
 	Zgys071   string  //库存量
 	Zgys091   string  //日耗量
-	Zgztl1    string  //在途量
-	Zgys06701 string  //掌握量
-	Zgys06901 string  //掌握天数
-	Zgys03    string  //是否招标
-	Ebeln     string  `orm:"index"` //采购单号
-	Ebelp     string  `orm:"index"` //行项目号
-	Namelast  string  //经办人
-	Udate     string  //审批日期及时间
-	Prgco     string  `orm:"index"` //审批代码
-	Frget     string  //状态批准尚未完全生效
-	Frggr     string  //审批组+批准策略为索引
-	Frgsx     string  //批准策略
-	Flag      string  `orm:"index"` //审批标识
-	Uppo      string  //上传SAP的PO审批订单
+	//Zgztl1    float64  //在途量
+	Zgys06701 string //掌握量
+	Zgys06901 int64  //掌握天数
+	Zgys03    string //是否招标
+	Zgys01t   string //发票方式
+	Zgys02t   string //运费方式
+	Ekkotext  string //抬头文本
+	Ebeln     string `orm:"index"` //采购单号
+	Ebelp     string `orm:"index"` //行项目号
+	Namelast  string //经办人
+	Udate     string //审批日期及时间
+	Prgco     string `orm:"index"` //PO审批代码
+	Frget     string //状态批准尚未完全生效
+	Frggr     string //审批组+批准策略为索引
+	Frgsx     string //批准策略
+	Flag      string `orm:"index"` //审批标识
+	Uppo      string //上传SAP的PO审批订单
 	//Uptime    time.Time //上传时间
 	//Sptime time.Time //审批时间
 }
@@ -106,11 +118,13 @@ type Topic struct {
 
 //用户
 type User struct {
-	Id    int64
-	Uname string `orm "unique" "index"` //用户名 两条记录不能重复
-	Pwd   string
-	Tel   string `orm:"index"`
-	Prgco string `orm "unique"` //审批代码 两条记录不能重复
+	Id       int64
+	Uname    string `orm "unique" "index"` //用户名 两条记录不能重复
+	Unamemd5 string `orm "unique" "index"` //用户名 两条记录不能重复
+	Pwd      string
+	Tel      string `orm:"index"`
+	Prgco    string `orm "unique"` //PO审批代码 两条记录不能重复
+	Prgcr    string `orm "unique"` //PR审批代码 两条记录不能重复
 
 	Frggr string //批准尚未完全生效+审批组+批准策略为索引
 	Frgsx string //批准策略
@@ -140,7 +154,7 @@ func RegisterDB() {
 	}
 
 	// 注册模型
-	orm.RegisterModel(new(Category), new(Topic), new(User), new(Sappo), new(Gilist), new(Matnrcgjiage))
+	orm.RegisterModel(new(Sappr), new(Topic), new(User), new(Sappo), new(Gilist), new(Matnrcgjiage))
 	// 注册驱动（“sqlite3” 属于默认注册，此处代码可省略）
 	//	orm.RegisterDriver(_SQLITE3_DRIVER, orm.DR_Sqlite)
 	// 注册默认数据库
@@ -307,8 +321,25 @@ func GetUser(uname, pwdmd5 string) (*User, error) {
 
 	return User, err
 }
+func GetUsermd5(unamemd5, pwdmd5 string) (*User, error) {
+	//tidNum, err := strconv.ParseInt(tid, 10, 64)
+	//if err != nil {
+	//	return nil, err
+	//}
+	var err error
+	o := orm.NewOrm()
 
-func InsertUser(uname, pwd, prg, tel string) error {
+	User := new(User)
+	qs := o.QueryTable("User")
+	err = qs.Filter("unamemd5", unamemd5).Filter("pwd", pwdmd5).One(User)
+	if err != nil {
+		return nil, err
+	}
+
+	return User, err
+}
+
+func InsertUser(uname, unamemd5, pwd, prg, prgpr, tel string) error {
 	//tidNum, err := strconv.ParseInt(tid, 10, 64)
 	//if err != nil {
 	//	return nil, err
@@ -316,10 +347,12 @@ func InsertUser(uname, pwd, prg, tel string) error {
 	o := orm.NewOrm()
 	pwdmd5 := utils.Md5(pwd)
 	cate := &User{
-		Uname: uname,
-		Pwd:   pwdmd5,
-		Tel:   tel,
-		Prgco: prg,
+		Uname:    uname,
+		Unamemd5: unamemd5,
+		Pwd:      pwdmd5,
+		Tel:      tel,
+		Prgco:    prg,
+		Prgcr:    prgpr,
 		//	TopicTime: time.Now(),
 	}
 	//检查数据
@@ -337,7 +370,7 @@ func InsertUser(uname, pwd, prg, tel string) error {
 
 	return nil
 }
-func UpdatetUser(uname, pwd, prg, tel string) error {
+func UpdatetUser(uname, pwd, prg, prgpr, tel string) error {
 	//tidNum, err := strconv.ParseInt(tid, 10, 64)
 	//if err != nil {
 	//	return nil, err
@@ -350,6 +383,7 @@ func UpdatetUser(uname, pwd, prg, tel string) error {
 		"Pwd":   pwdmd5,
 		"Tel":   tel,
 		"Prgco": prg,
+		"Prgcr": prgpr,
 	})
 	if err != nil {
 		return err
@@ -365,12 +399,14 @@ func UpdatetUser(uname, pwd, prg, tel string) error {
 }
 
 //一、从RFC中读取未审批的采购订单
-func GetSappo(prg string) error {
-
+func GetSappo(prg, prgpr string) error {
+	//连接SAP系统
 	saprfc.Connect()
-
+	////调取采购订单和申请单 PO PR RFC："ZMM_PO_RELEASE"
 	params := map[string]interface{}{
-		"I_FRGCO": prg,
+		"I_FRGCO": prg,   //PO审批代码
+		"I_FRGCR": prgpr, //PR审批代码
+		/////"I_FRGGR": ,//审批组
 		//		"GLTRP":      "20170829",
 		//"MANTR_MARK": "X",
 		//		"DELIMITER":   ";",
@@ -383,7 +419,6 @@ func GetSappo(prg string) error {
 		//fmt.Println(err)
 		return err
 	}
-
 	//	var ret []string
 
 	/*
@@ -400,6 +435,7 @@ func GetSappo(prg string) error {
 	*/
 	//var b []byte
 	//var s []string
+	//采购订单信息PO
 	echoStruct := r["T_ZMM_EKPO"].([]interface{})
 	for _, value := range echoStruct {
 		values := value.(map[string]interface{})
@@ -426,40 +462,61 @@ func GetSappo(prg string) error {
 
 		fmt.Println(values["NAME1"])
 		fmt.Println(values["ZGYS0901"])
+		//SAP数据类型转换所有SAP接口过来的数据初步查看，类型都是string，需要转换为合适的类型，以免调取RFC时报类型错误。
+		Menge1String := values["MENGE"].(string) //本次量
+		Menge1Float64, _ := strconv.ParseFloat(Menge1String, 64)
+		Netpr1String := values["NETPR"].(string) //本次单价
+		Netpr1Float64, _ := strconv.ParseFloat(Netpr1String, 64)
+		Zgys06901String := values["ZGYS0691"].(string) //掌握天数
+		Zgys06901Int64, _ := strconv.ParseInt(Zgys06901String, 10, 0)
+		//SAP数据类型转换
+		////jiages, _ := strconv.ParseFloat(jiage, 64)
+		//jiages, _ := strconv.ParseInt(jiage, 10, 0)
+		//类型转换
 
 		o := orm.NewOrm()
 		cate := &Sappo{
-
 			Username: values["USERNAME"].(string), //已批准人
 			//Username:  string(usr),
-			Bedat:    values["BEDAT"].(time.Time).Format("2006-01-02"), //采购日期
-			Maktx:    values["MAKTX"].(string),                         //物料名称
-			Name1:    values["NAME1"].(string),                         //供应商描述
-			Menge1:   values["MENGE"].(float64),                        //本次量
-			Netpr1:   values["NETPR"].(float64),                        //本次单价
-			Zgys05k:  values["ZGYS05K"].(string),                       //价格类型
-			Zgys0502: values["ZGYS0502"].(string),                      //到站
-			Name:     values["NAME"].(string),                          //送货地点
-			Eindt:    values["EINDT"].(time.Time).Format("2006-01-02"), //time.Now(),//到货日期time.Now().Format("2006-01-02 15:04:05")
-			Vtext:    values["VTEXT"].(string),                         //付款方式
-			Zgys081:  values["ZGYS081"].(string),                       //上次单价
-			//Zgys0901:  values["ZGYS0901"].(time.Time).Format("2006-01-02"), //上次时间
-			//Zgys0901:  values["ZGYS0901"].(string),
-			Matnr:     values["MATNR"].(string),    //物料号
-			Zgys071:   values["ZGYS071"].(string),  //库存量
-			Zgys091:   values["ZGYS091"].(string),  //日耗量
-			Zgztl1:    values["ZGZTL1"].(string),   //在途量
+			Bedat:  values["BEDAT"].(time.Time).Format("2006-01-02"), //采购日期
+			Matnr:  values["MATNR"].(string),                         //物料号
+			Maktx:  values["MAKTX"].(string),                         //物料名称
+			Lifnr:  values["LIFNR"].(string),                         //供应商代码
+			Name1:  values["NAME1"].(string),                         //供应商描述
+			Menge1: Menge1Float64,                                    //本次量
+			Netpr1: Netpr1Float64,                                    //本次单价
+			Meins:  values["MEINS"].(string),                         //订单单位
+			//Netpr: values["NETPR"].(float64), //采购凭证中的净价格(以凭证货币计)
+			Priceunit: values["PRICEUNIT"].(string), //价格单位 /1kg or /1000kg
+
+			//Zgys05k:  values["ZGYS05K"].(string),                       //价格类型
+			//Zgys0502: values["ZGYS0502"].(string),                      //到站
+			Name:  values["NAME"].(string),  //送货地点 /工厂名
+			Werks: values["WERKS"].(string), //工厂代码
+
+			Eindt:    values["EINDT"].(time.Time).Format("2006-01-02"),    //time.Now(),//到货日期time.Now().Format("2006-01-02 15:04:05")
+			Vtext:    values["VTEXT"].(string),                            //付款方式
+			Zgys081:  values["ZGYS08"].(string),                           //上次单价
+			Zgys0901: values["ZGYS0901"].(time.Time).Format("2006-01-02"), //上次时间
+			Zgys071:  values["ZGYS07"].(string),                           //当前库存量
+			Zgys091:  values["ZGYS09"].(string),                           //日耗量
+			//Zgztl1:    values["ZGZTL1"].(float64),   //在途量
+			Zgys06:    values["ZGYS06"].(string),   //安全库存量
 			Zgys06701: values["ZGYS0671"].(string), //掌握量
-			Zgys06901: values["ZGYS0691"].(string), //掌握天数
-			Zgys03:    values["ZGYS03"].(string),   //是否招标
+			Zgys06901: Zgys06901Int64,              //掌握天数
+			Zgys03:    values["ZGYS03T"].(string),  //是否招标
+			Zgys01t:   values["ZGYS01T"].(string),  //发票方式
+			Zgys02t:   values["ZGYS02T"].(string),  //运费方式
 			Ebeln:     ebeln.(string),              //采购订单 .(string)是类型转换
 			Ebelp:     ebelp.(string),              //行项目号
-			Namelast:  values["NAMELAST"].(string), //经办人
-			Udate:     values["UDATE"].(string),    //审批日期及时间
-			Prgco:     prg,                         //审批代码
-			Frget:     values["FRGET"].(string),    //状态批准尚未完全生效
-			Frggr:     values["FRGGR"].(string),    //审批组+批准策略为索引
-			Frgsx:     values["FRGSX"].(string),    //批准策略
+			//Namelast:  values["NAMELAST"].(string), //经办人
+			Ekkotext: values["EKKOTEXT"].(string), //抬头文本
+
+			Udate: values["UDATE"].(string), //审批日期及时间
+			Prgco: prg,                      //审批代码
+			//Frget: values["FRGET"].(string), //状态批准尚未完全生效
+			//Frggr: values["FRGGR"].(string), //审批组+批准策略为索引
+			//Frgsx: values["FRGSX"].(string), //批准策略
 
 			//currentTime := time.Now().Local()
 			//timeStr := currentTime.Format("2006-01-02 15:04:05.000")
@@ -478,13 +535,21 @@ func GetSappo(prg string) error {
 				return err
 			}
 		}
+
+		//类型转换
+		////jiages, _ := strconv.ParseFloat(jiage, 64)
+		//jiages, _ := strconv.ParseInt(jiage, 10, 0)
+		Netpr1String1 := values["NETPR"].(string) //本次单价
+		Netpr1Float641, _ := strconv.ParseFloat(Netpr1String1, 64)
+
+		//类型转换
 		//定义slice工厂物料采购价格清单表
 		cgjiage := &Matnrcgjiage{
 			Werks:  values["WERKS"].(string),
 			Matnr:  values["MATNR"].(string),                         //物料号
 			Maktx:  values["MAKTX"].(string),                         //物料名称
 			Bedat:  values["BEDAT"].(time.Time).Format("2006-01-02"), //采购日期
-			Netpr1: values["NETPR"].(float64),                        //本次单价
+			Netpr1: Netpr1Float641,                                   //本次单价
 
 		}
 		//存储DB表中
@@ -499,6 +564,51 @@ func GetSappo(prg string) error {
 			if err != nil {
 				return err
 			}
+		}
+		//采购申请信息PR
+		echoStructpr := r["T_ZMM_EBAN"].([]interface{})
+		for _, value := range echoStructpr {
+			values := value.(map[string]interface{})
+			//		fmt.Println(len(values)) //打印行数
+			//		fmt.Println(values["MATNR"])//打印某个字段的值
+			//	delete(values, "MAKTX")
+			//		fmt.Println(values["MATNR"])
+			//		fmt.Println(values["MATNR"])
+
+			banfn := values["BANFN"]
+			bnfpo := values["BNFPO"]
+			//类型转换
+			////jiages, _ := strconv.ParseFloat(jiage, 64)
+			//jiages, _ := strconv.ParseInt(jiage, 10, 0)
+			MengeString2 := values["MENGE"].(string) //	采购申请数量
+			MengeFloat642, _ := strconv.ParseFloat(MengeString2, 64)
+			//类型转换
+			catepr := &Sappr{
+				Banfn:    banfn.(string),                                   //	采购申请号
+				Bnfpo:    bnfpo.(string),                                   //	采购申请的项目编号
+				Frgst:    values["FRGST"].(string),                         //	采购请求中的批准策略
+				Ekgrp:    values["EKGRP"].(string),                         //	采购组
+				Ernam:    values["ERNAM"].(string),                         //	对象创建人姓名
+				Erdat:    values["ERDAT"].(time.Time).Format("2006-01-02"), //	最近一次更改的日期
+				Txz01:    values["TXZ01"].(string),                         //	短文本
+				Matnr:    values["MATNR"].(string),                         //	物料号
+				Werks:    values["WERKS"].(string),                         //	工厂
+				Menge:    MengeFloat642,                                    //	采购申请数量
+				Meins:    values["MEINS"].(string),                         //	采购申请计量单位
+				Lfdat:    values["LFDAT"].(time.Time).Format("2006-01-02"), //	项目交货日期
+				Username: values["USERNAME"].(string),                      //已批准人
+				Prgcr:    prgpr,                                            //PR审批代码
+			}
+			err := o.QueryTable("sappr").Filter("banfn", banfn).Filter("bnfpo", bnfpo).Filter("Prgcr", prgpr).One(catepr)
+			if err == orm.ErrNoRows { //没找到相同数据 insert DB
+				//插入数据
+				_, err = o.Insert(catepr)
+				//_, err = o.Update(cate)
+				if err != nil {
+					return err
+				}
+			}
+
 		}
 
 	}
@@ -558,7 +668,7 @@ func GetSappo(prg string) error {
 
 	saprfc.Close()
 	//SAPconnection.Close()
-	return nil
+	return err
 }
 
 //调取SAP采购订单审批FUNCTION
@@ -572,8 +682,9 @@ func PostSapPo(tid, ebeln, prg, uppo string) error {
 
 	//接口开始调用
 	params := map[string]interface{}{
-		"PURCHASEORDER": ebeln,
-		"PO_REL_CODE":   prg,
+		"PURCHASEORDER":  ebeln,
+		"PO_REL_CODE":    prg,
+		"USE_EXCEPTIONS": "X",
 	}
 	r, err := saprfc.SAPconnection.Call("BAPI_PO_RELEASE", params)
 	if err != nil {
@@ -664,10 +775,11 @@ func GetPrgcocount(prg string) (flagx, flagnot, ebelncont int64) {
 
 	ebelncont = 0
 	for _, value := range Sappolists {
-		//ebelncont2 := int64(value.Menge1)
+		ebelncont2 := int64(value.Menge1)
 		//类型转换把“11.0001”的string转到浮点类型,最后强转为int64
-		//ebelncont2, _ := strconv.ParseFloat(value.Menge1, 64)
-		ebelncont += int64(value.Menge1)
+		//ebelncont2, _ := strconv.ParseInt(value.Menge1, 10, 0)
+		//ebelncont += int64(value.Menge1)
+		ebelncont += ebelncont2
 		////fmt.Println(ebelncont)
 
 	}
@@ -760,7 +872,9 @@ func GetPricelistOut(matnr string) ([]string, []float64, error) {
 		jiage := values.Netpr1
 		//类型转换
 		////jiages, _ := strconv.ParseFloat(jiage, 64)
+		//jiages, _ := strconv.ParseInt(jiage, 10, 0)
 
+		//netpr1sl = append(netpr1sl, jiages)  //采购价格
 		netpr1sl = append(netpr1sl, jiage)  //采购价格
 		bedatsl = append(bedatsl, datetime) //工作代码+日期
 	}
@@ -785,10 +899,10 @@ func GetMatnrkday(flag, prgco string) ([]string, []int64, error) {
 		text := values.Name + "-" + values.Maktx
 		kyday := values.Zgys06901
 		//类型转换
-		kydays, _ := strconv.ParseInt(kyday, 10, 0)
+		//kydays, _ := strconv.ParseInt(kyday, 10, 0)
 
-		Maktxs = append(Maktxs, text)           //物料加工厂描述
-		Zgys06901s = append(Zgys06901s, kydays) //库存可用天数
+		Maktxs = append(Maktxs, text)          //物料加工厂描述
+		Zgys06901s = append(Zgys06901s, kyday) //库存可用天数
 		////fmt.Println(text)
 	}
 

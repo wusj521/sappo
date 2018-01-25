@@ -12,11 +12,11 @@ var SAPconnection *saprfc.Connection
 func abapSystem() saprfc.ConnectionParameter {
 	return saprfc.ConnectionParameter{
 		Dest:   "aa",
-		Client: "xx",
+		Client: "xxx",
 		User:   "xxx",
 		Passwd: "xxx",
 		Lang:   "ZH",
-		Ashost: "192.168.0.1",
+		Ashost: "192.168.100.xxx",
 		Sysnr:  "00",
 		//		Saprouter: "/H/123.125.21.51/H/",
 	}

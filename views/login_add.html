@@ -10,7 +10,9 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="pwd" class="form-control" name="pwd" placeholder="新密码" required>
         <label for="prg" class="sr-only">Prg</label>
-        <input type="text" id="prg" class="form-control" name="prg" placeholder="输入审批码" required>
+        <input type="text" id="prg" class="form-control" name="prg" placeholder="输入采购订单审批码" required>
+        <label for="prgpr" class="sr-only">Prgpr</label>
+        <input type="text" id="prgpr" class="form-control" name="prgpr" placeholder="输入采购申请审批码" required>
         <label for="tel" class="sr-only">Tel</label>
         <input type="text" id="tel" class="form-control" name="tel" placeholder="Tel" required>
         <button class="btn btn-lg btn-primary btn-block" onclick="return checkInput()" type="submit">保存</button>
@@ -30,7 +32,12 @@
         }
         var prg = document.getElementById("prg")
         if (prg.value.length == 0) {
-          alert("输入SAP审批码");
+          alert("输入采购订单审批码");
+          return false;
+        }
+        var prgpr = document.getElementById("prgpr")
+        if (prgpr.value.length == 0) {
+          alert("输入采购申请审批码");
           return false;
         }
       }

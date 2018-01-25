@@ -20,12 +20,20 @@ func main() {
 	//注册路由
 	beego.Router("/", &controllers.HomeController{})
 	beego.Router("/category", &controllers.CategoryController{})
+	//采购订单待审批
 	beego.Router("/daisp", &controllers.DaispController{})
 	beego.AutoRouter(&controllers.DaispController{})
-	beego.Router("/login", &controllers.LoginController{})
-	beego.Router("/loginadd", &controllers.LoginaddController{})
 	beego.Router("/sappo", &controllers.SappoController{})
 	beego.Router("/price", &controllers.PriceController{})
+	//采购申请待审批
+	beego.Router("/daisppr", &controllers.DaispprController{})
+	beego.AutoRouter(&controllers.DaispprController{})
+	//user
+	beego.Router("/login", &controllers.LoginController{})
+	beego.Router("/loginadd", &controllers.LoginaddController{})
+	beego.Router("/loginchange", &controllers.LoginchangeController{})
+
+	beego.ErrorController(&controllers.ErrorController{})
 	//beego.ErrorHandler("/404", &controllers.PageNotFound{})
 
 	//启动beeblog

@@ -1,0 +1,52 @@
+{{template "header"}}
+	<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        {{template "navbar" .}}
+        </div>
+    </div>
+
+
+	<div class="container">
+		<form method="post" action="/daisppr">
+			<input type="hidden" name="tid" value="{{.Tid}}">
+			<input type="hidden" name="banfn" value="{{.sappr.Banfn}}">
+			
+			{{if .Flag}}
+			<button type="submit" class="btn btn-default btn-lg btn-primary btn-block">审批 {{.sappr.Menge}}</button>
+			{{else}}
+			<button href="/daisppr?exit=true" type="submit" class="btn btn-default btn-lg btn-primary btn-block" onclick="return backToHome();">返回</button>
+			{{end}}
+
+			<script type="text/javascript">
+				      	function backToHome() {
+				      		window.location.href = "/daisppr";
+				      		return false;
+				      	}
+			</script>	      	
+			
+			<ul class="list-group">	
+				<li class="list-group-item">			
+					<div style= "display:inline;">产品名：</div>
+					<div class="text-right" style= "display:inline">{{.sappr.Txz01}}</div>
+				</li>
+				<li style="color:#F00;font-size:12px;" class="list-group-item">本次量：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Menge}} 单位：{{.sappr.Meins}}</li>
+				<li class="list-group-item">送货地点:&nbsp;&nbsp;&nbsp;&nbsp; {{.sappr.Werks}}</li>
+				<li class="list-group-item">采购组：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Ekgrp}}</li>
+				<li class="list-group-item">创建人：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Ernam}}</li>
+				<li class="list-group-item">审批人：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Username}}</li>
+				<li style="color:#F00;font-size:12px;" class="list-group-item">交货日期：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Lfdat}}</li>
+				<li class="list-group-item">申请单号:&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Banfn}}</li>
+				<li class="list-group-item">项目编号:&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Bnfpo}}</li>
+				<li class="list-group-item">物料号：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Matnr}}</li>
+				<li class="list-group-item">更改的日期:&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Erdat}}</li>
+				<li class="list-group-item">批准策略：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Frgst}}</li>
+				<li class="list-group-item">PR审批代码：&nbsp;&nbsp;&nbsp;&nbsp;{{.sappr.Prgcr}}</li>
+				
+			</ul>
+		</form>
+	</div>
+		<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
+		<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	</body>
+</html>
